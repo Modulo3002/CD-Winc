@@ -30,7 +30,7 @@ jobs:
           pytest
   
   deploy:
-    needs: run-tests
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Flask app
