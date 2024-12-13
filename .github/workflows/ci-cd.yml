@@ -27,19 +27,19 @@ jobs:
         run: |
           bash -c "source venv/bin/activate && pytest"
 
-deploy:
-  runs-on: ubuntu-latest
-  needs: build
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
 
-  steps:
-    - name: Deploy to VPS
-      run: |
-        echo "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/ssh_key
-        chmod 600 /tmp/ssh_key
-        ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no root@161.35.68.159 << EOF
-        cd /root/CD-Winc
-        git pull origin main
-        source venv/bin/activate
-        pip install -r requirements.txt
-        systemctl restart flask_app
-        EOF
+    steps:
+      - name: Deploy to VPS
+        run: |
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
+          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no root@161.35.68.159 << EOF
+          cd /root/CD-Winc
+          git pull origin main
+          source venv/bin/activate
+          pip install -r requirements.txt
+          systemctl restart flask_app
+          EOF
