@@ -28,20 +28,19 @@ jobs:
         run: |
           source venv/bin/activate
           pytest
-
+  
   deploy:
+    needs: run-tests
     runs-on: ubuntu-latest
-    needs: build
-
     steps:
-      - name: Deploy to VPS
-        run: |
-          ssh -o StrictHostKeyChecking=no root@161.35.68.159 'bash -s' << 'EOF'
-          cd /path/to/flask_app
-          git pull origin main
-          source venv/bin/activate
-          pip install -r requirements.txt
-          systemctl restart flask_app
-          EOF
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY}}
+      - name: Deploy Flask app
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.SSH_USERNAME }}
+          script: |
+            pip install gunicorn flask
+            cd /home/CD-winc
+            git pull
+            systemctl restart flask_app
