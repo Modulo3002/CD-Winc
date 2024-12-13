@@ -21,13 +21,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
+          bash -c "source venv/bin/activate && pip install -r requirements.txt"
 
       - name: Run tests
         run: |
-          source venv/bin/activate
-          pytest
+          bash -c "source venv/bin/activate && pytest"
 
   deploy:
     runs-on: ubuntu-latest
@@ -36,12 +34,12 @@ jobs:
     steps:
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no root@161.35.68.159 'bash -s' << 'EOF'
-          cd /path/to/flask_app
+          ssh -o StrictHostKeyChecking=no root@161.35.68.159 << EOF
+          cd /root/CD-Winc
           git pull origin main
           source venv/bin/activate
           pip install -r requirements.txt
           systemctl restart flask_app
           EOF
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY}}
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
