@@ -34,14 +34,14 @@ jobs:
     needs: build
 
     steps:
-      - name: Deploy to VPS
-        run: |
-          ssh -o StrictHostKeyChecking=no root@161.35.68.159 'bash -s' << 'EOF'
-          cd /path/to/flask_app
-          git pull origin main
-          source venv/bin/activate
-          pip install -r requirements.txt
-          systemctl restart flask_app
-          EOF
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY}}
+  
+
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 161.35.68.159
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
+          script: ls -al && pwd
